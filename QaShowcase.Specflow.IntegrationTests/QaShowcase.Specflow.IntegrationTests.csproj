@@ -1,0 +1,159 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<SpecFlowFeatureFiles Remove="Features\EnsinoRegular\Logins\LogarUsuario.feature" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<SpecFlowObsoleteCodeBehindFiles Remove="Features\EnsinoRegular\Academico\Atributos Adicionais\Cadastrar\CadastroResponsavel.feature.cs" />
+		<SpecFlowObsoleteCodeBehindFiles Remove="Features\EnsinoRegular\Academico\Atributos Adicionais\Editar\CadastroAtributosAdicionais.feature.cs" />
+		<SpecFlowObsoleteCodeBehindFiles Remove="Features\EnsinoRegular\Academico\Atributos Adicionais\Excluir\EditarAtributosAdicionais.feature.cs" />
+		<SpecFlowObsoleteCodeBehindFiles Remove="Features\EnsinoRegular\Academico\Emissão FichaAluno\CadastroAtributosAdicionais.feature.cs" />
+		<SpecFlowObsoleteCodeBehindFiles Remove="Features\EnsinoRegular\Academico\FichaAluno\Editar\CadastroFichaAluno.feature.cs" />
+		<SpecFlowObsoleteCodeBehindFiles Remove="Features\EnsinoRegular\Academico\FichaAluno\Excluir\CadastroFichaAluno.feature.cs" />
+		<SpecFlowObsoleteCodeBehindFiles Remove="Features\EnsinoRegular\Academico\MatriculaIndividual\Cancelar\CadastrarOutrosProfissionais.feature.cs" />
+		<SpecFlowObsoleteCodeBehindFiles Remove="Features\EnsinoRegular\Academico\MatriculaIndividual\Excluir\CadastrarOutrosProfissionais.feature.cs" />
+		<SpecFlowObsoleteCodeBehindFiles Remove="Features\EnsinoRegular\Academico\MatriculaIndividual\Matricular\CadastrarOutrosProfissionais.feature.cs" />
+		<SpecFlowObsoleteCodeBehindFiles Remove="Features\EnsinoRegular\Academico\Professor\Editar\Professor.feature.cs" />
+		<SpecFlowObsoleteCodeBehindFiles Remove="Features\EnsinoRegular\Academico\Professor\Excluir\Professor.feature.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="Features\EnsinoRegular\Academico\Boletins e Ficha de Aproveitamento\Associacao de serie a configuracao do boletim\AssociaSerieBoletim.feature" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Bogus" Version="34.0.2" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
+		<PackageReference Include="Microsoft.Playwright" Version="1.39.0" />
+		<PackageReference Include="Microsoft.Playwright.NUnit" Version="1.38.0" />
+		<PackageReference Include="SpecFlow" Version="3.9.74" />
+		<PackageReference Include="SpecFlow.Plus.LivingDocPlugin" Version="3.9.57" />
+		<PackageReference Include="SpecFlow.NUnit" Version="3.9.74" />
+		<PackageReference Include="nunit" Version="3.13.3" />
+		<PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
+		<PackageReference Include="FluentAssertions" Version="6.12.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="Drivers\" />
+		<Folder Include="Features\Curso\" />
+
+		<Folder Include="Features\EnsinoRegular\Academico\AreaDeConhecimento\Pesquisar\" />
+
+		<Folder Include="Features\EnsinoRegular\Academico\Atributos Adicionais\Pesquisar\" />
+
+
+		<Folder Include="Features\EnsinoRegular\Academico\Cadastros Básicos\Outros Profissionais\Pesquisar\" />
+
+
+		<Folder Include="Features\EnsinoRegular\Academico\Cidades\Cadastrar\" />
+
+		<Folder Include="Features\EnsinoRegular\Academico\DiarioDeClasse\ConteudoMinistrado\2Replicar\" />
+
+		<Folder Include="Features\EnsinoRegular\Academico\Disciplina\Pesquisar\" />
+		<Folder Include="Features\EnsinoRegular\Academico\ProgramacaoDeAvaliacoes\Excluir\" />
+		<Folder Include="Features\EnsinoRegular\Academico\RemanejamentoIndividual\2Estornar\" />
+		<Folder Include="Features\EnsinoRegular\Academico\Serie\Editar\" />
+		<Folder Include="Features\EnsinoRegular\Academico\Serie\Excluir\" />
+		<Folder Include="Features\EnsinoRegular\Academico\Turma\Pesquisar\" />
+		<Folder Include="Features\EnsinoRegular\Financeiro\PlanosDePagamentos\Clonar\" />
+		<Folder Include="Features\EnsinoRegular\Financeiro\PlanosDePagamentos\Pesquisar\" />
+		<Folder Include="Features\EnsinoRegular\Logins\Excluir\" />
+		<Folder Include="Features\EnsinoRegular\Logins\ValidarSituacao\" />
+		<Folder Include="Support\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Features\EnsinoRegular\Academico\Atributos Adicionais\Editar\EditarAtributosAdicionais.feature.cs">
+			<DependentUpon>EditarAtributosAdicionais.feature</DependentUpon>
+		</Compile>
+		<Compile Update="Features\EnsinoRegular\Academico\Atributos Adicionais\Excluir\ExcluirAtributosAdicionais.feature.cs">
+			<DependentUpon>ExcluirAtributosAdicionais.feature</DependentUpon>
+		</Compile>
+		<Compile Update="Features\EnsinoRegular\Academico\Emissão FichaAluno\EmitirFichaAluno.feature.cs">
+			<DependentUpon>EmitirFichaAluno.feature</DependentUpon>
+		</Compile>
+		<Compile Update="Features\EnsinoRegular\Academico\FichaAluno\Editar\EditarFichaAluno.feature.cs">
+			<DependentUpon>EditarFichaAluno.feature</DependentUpon>
+		</Compile>
+		<Compile Update="Features\EnsinoRegular\Academico\FichaAluno\Excluir\ExcluirFichaAluno.feature.cs">
+			<DependentUpon>ExcluirFichaAluno.feature</DependentUpon>
+		</Compile>
+		<Compile Update="Features\EnsinoRegular\Academico\MatriculaIndividual\Cancelar\CancelarMatriculaIndividual.feature.cs">
+			<DependentUpon>CancelarMatriculaIndividual.feature</DependentUpon>
+		</Compile>
+		<Compile Update="Features\EnsinoRegular\Academico\MatriculaIndividual\Excluir\ExcluirMatriculaIndividual.feature.cs">
+			<DependentUpon>ExcluirMatriculaIndividual.feature</DependentUpon>
+		</Compile>
+		<Compile Update="Features\EnsinoRegular\Academico\MatriculaIndividual\Matricular\MatricularMatriculaIndividual.feature.cs">
+			<DependentUpon>MatricularMatriculaIndividual.feature</DependentUpon>
+		</Compile>
+		<Compile Update="Features\EnsinoRegular\Academico\Professor\Editar\EditarProfessor.feature.cs">
+			<DependentUpon>EditarProfessor.feature</DependentUpon>
+		</Compile>
+		<Compile Update="Features\EnsinoRegular\Academico\Professor\Excluir\ExcluirProfessor.feature.cs">
+			<DependentUpon>ExcluirProfessor.feature</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="Features\EnsinoRegular\Academico\FichaAluno\ResourcesFichaAluno\PNGTests.png">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<SpecFlowFeatureFiles Update="Features\EnsinoRegular\Academico\Atributos Adicionais\Cadastrar\CadastroAtributosAdicionais.feature">
+			<Visible>$(UsingMicrosoftNETSdk)</Visible>
+			<CodeBehindFile>%(RelativeDir)%(Filename).feature$(DefaultLanguageSourceExtension)</CodeBehindFile>
+		</SpecFlowFeatureFiles>
+		<SpecFlowFeatureFiles Update="Features\EnsinoRegular\Academico\Atributos Adicionais\Editar\EditarAtributosAdicionais.feature">
+			<Visible>$(UsingMicrosoftNETSdk)</Visible>
+			<CodeBehindFile>%(RelativeDir)%(Filename).feature$(DefaultLanguageSourceExtension)</CodeBehindFile>
+		</SpecFlowFeatureFiles>
+		<SpecFlowFeatureFiles Update="Features\EnsinoRegular\Academico\Atributos Adicionais\Excluir\ExcluirAtributosAdicionais.feature">
+			<Visible>$(UsingMicrosoftNETSdk)</Visible>
+			<CodeBehindFile>%(RelativeDir)%(Filename).feature$(DefaultLanguageSourceExtension)</CodeBehindFile>
+		</SpecFlowFeatureFiles>
+		<SpecFlowFeatureFiles Update="Features\EnsinoRegular\Academico\Emissão FichaAluno\EmitirFichaAluno.feature">
+			<Visible>$(UsingMicrosoftNETSdk)</Visible>
+			<CodeBehindFile>%(RelativeDir)%(Filename).feature$(DefaultLanguageSourceExtension)</CodeBehindFile>
+		</SpecFlowFeatureFiles>
+		<SpecFlowFeatureFiles Update="Features\EnsinoRegular\Academico\FichaAluno\Editar\EditarFichaAluno.feature">
+			<Visible>$(UsingMicrosoftNETSdk)</Visible>
+			<CodeBehindFile>%(RelativeDir)%(Filename).feature$(DefaultLanguageSourceExtension)</CodeBehindFile>
+		</SpecFlowFeatureFiles>
+		<SpecFlowFeatureFiles Update="Features\EnsinoRegular\Academico\FichaAluno\Excluir\ExcluirFichaAluno.feature">
+			<Visible>$(UsingMicrosoftNETSdk)</Visible>
+			<CodeBehindFile>%(RelativeDir)%(Filename).feature$(DefaultLanguageSourceExtension)</CodeBehindFile>
+		</SpecFlowFeatureFiles>
+		<SpecFlowFeatureFiles Update="Features\EnsinoRegular\Academico\MatriculaIndividual\Cancelar\CancelarMatriculaIndividual.feature">
+			<Visible>$(UsingMicrosoftNETSdk)</Visible>
+			<CodeBehindFile>%(RelativeDir)%(Filename).feature$(DefaultLanguageSourceExtension)</CodeBehindFile>
+		</SpecFlowFeatureFiles>
+		<SpecFlowFeatureFiles Update="Features\EnsinoRegular\Academico\MatriculaIndividual\Excluir\ExcluirMatriculaIndividual.feature">
+			<Visible>$(UsingMicrosoftNETSdk)</Visible>
+			<CodeBehindFile>%(RelativeDir)%(Filename).feature$(DefaultLanguageSourceExtension)</CodeBehindFile>
+		</SpecFlowFeatureFiles>
+		<SpecFlowFeatureFiles Update="Features\EnsinoRegular\Academico\MatriculaIndividual\Matricular\MatricularMatriculaIndividual.feature">
+			<Visible>$(UsingMicrosoftNETSdk)</Visible>
+			<CodeBehindFile>%(RelativeDir)%(Filename).feature$(DefaultLanguageSourceExtension)</CodeBehindFile>
+		</SpecFlowFeatureFiles>
+		<SpecFlowFeatureFiles Update="Features\EnsinoRegular\Academico\Professor\Editar\EditarProfessor.feature">
+			<Visible>$(UsingMicrosoftNETSdk)</Visible>
+			<CodeBehindFile>%(RelativeDir)%(Filename).feature$(DefaultLanguageSourceExtension)</CodeBehindFile>
+		</SpecFlowFeatureFiles>
+		<SpecFlowFeatureFiles Update="Features\EnsinoRegular\Academico\Professor\Excluir\ExcluirProfessor.feature">
+			<Visible>$(UsingMicrosoftNETSdk)</Visible>
+			<CodeBehindFile>%(RelativeDir)%(Filename).feature$(DefaultLanguageSourceExtension)</CodeBehindFile>
+		</SpecFlowFeatureFiles>
+	</ItemGroup>
+
+</Project>

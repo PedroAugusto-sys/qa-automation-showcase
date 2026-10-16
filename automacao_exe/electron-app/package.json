@@ -1,0 +1,66 @@
+{
+  "name": "hub-automacao-electron",
+  "version": "1.0.0",
+  "description": "Hub Electron para gerenciamento e execução de automações de testes",
+  "main": "main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win --dir",
+    "pack:win": "electron-packager . \"Hub de Automações\" --platform=win32 --arch=x64 --out=dist --overwrite --asar"
+  },
+  "keywords": [
+    "electron",
+    "automation",
+    "testing",
+    "bdd"
+  ],
+  "author": "Pedro Augusto",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^39.2.4",
+    "electron-builder": "^26.0.12",
+    "electron-packager": "^17.1.2"
+  },
+  "dependencies": {
+    "electron-store": "^8.2.0"
+  },
+  "build": {
+    "appId": "com.qateam.hub-automacao",
+    "productName": "Hub de Automação",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "dir",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/a.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "files": [
+      "main/**/*",
+      "preload/**/*",
+      "renderer/dist/**/*",
+      "automation-runner/**/*",
+      "package.json",
+      "node_modules/electron-store/**/*",
+      "!renderer/node_modules/**/*",
+      "!renderer/src/**/*",
+      "!renderer/public/**/*",
+      "!renderer/vite.config.js",
+      "!renderer/package.json"
+    ]
+  }
+}

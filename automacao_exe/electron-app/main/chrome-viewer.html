@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualização da Automação</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #1e1e1e;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: #2d2d2d;
+            padding: 10px 20px;
+            border-bottom: 1px solid #444;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .header h1 {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .status {
+            font-size: 12px;
+            color: #888;
+        }
+        
+        .status.connected {
+            color: #4caf50;
+        }
+        
+        .status.connecting {
+            color: #ff9800;
+        }
+        
+        .status.error {
+            color: #f44336;
+        }
+        
+        .viewer-container {
+            flex: 1;
+            position: relative;
+            background: #000;
+            overflow: hidden;
+        }
+        
+        .viewer-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #fff;
+        }
+        
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #888;
+        }
+        
+        .error-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #f44336;
+            padding: 20px;
+            background: #2d2d2d;
+            border-radius: 8px;
+            max-width: 500px;
+        }
+        
+        .spinner {
+            border: 3px solid #333;
+            border-top: 3px solid #4caf50;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🌐 Visualização da Automação</h1>
+        <div class="status" id="status">Conectando...</div>
+    </div>
+    <div class="viewer-container">
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <div>Conectando ao Chrome...</div>
+        </div>
+        <iframe class="viewer-frame" id="viewerFrame" style="display: none;"></iframe>
+        <div class="error-message" id="errorMessage" style="display: none;"></div>
+    </div>
+
+    <script>
+        const DEBUG_PORT = new URLSearchParams(window.location.search).get('port') || '9222';
+        const CDP_URL = `http://localhost:${DEBUG_PORT}/json`;
+        
+        const statusEl = document.getElementById('status');
+        const loadingEl = document.getElementById('loading');
+        const viewerFrame = document.getElementById('viewerFrame');
+        const errorMessage = document.getElementById('errorMessage');
+        
+        let reconnectAttempts = 0;
+        const MAX_RECONNECT_ATTEMPTS = 20;
+        const RECONNECT_DELAY = 1000;
+        
+        async function connectToChrome() {
+            try {
+                statusEl.textContent = 'Conectando...';
+                statusEl.className = 'status connecting';
+                
+                // Tenta obter a lista de páginas abertas no Chrome
+                // Usa mode: 'no-cors' para evitar problemas de CORS
+                const response = await fetch(CDP_URL, {
+                    method: 'GET',
+                    mode: 'cors',
+                    cache: 'no-cache'
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const pages = await response.json();
+                
+                if (!pages || pages.length === 0) {
+                    throw new Error('Nenhuma página aberta no Chrome');
+                }
+                
+                // Encontra a primeira página que não seja a página de DevTools
+                const targetPage = pages.find(page => 
+                    page.type === 'page' && 
+                    !page.url.includes('chrome-devtools://') &&
+                    !page.url.includes('chrome://') &&
+                    !page.url.includes('data:') &&
+                    page.url.startsWith('http')
+                ) || pages.find(page => 
+                    page.type === 'page' && 
+                    !page.url.includes('chrome-devtools://')
+                ) || pages[0];
+                
+                if (!targetPage) {
+                    throw new Error('Nenhuma página válida encontrada');
+                }
+                
+                // Carrega a página no iframe
+                // Adiciona sandbox para segurança, mas permite scripts e navegação
+                viewerFrame.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-forms allow-popups allow-modals');
+                viewerFrame.src = targetPage.url;
+                viewerFrame.style.display = 'block';
+                loadingEl.style.display = 'none';
+                errorMessage.style.display = 'none';
+                
+                statusEl.textContent = `Conectado - ${targetPage.url.substring(0, 50)}...`;
+                statusEl.className = 'status connected';
+                reconnectAttempts = 0;
+                
+                // Atualiza periodicamente para acompanhar navegação
+                startPolling();
+                
+            } catch (error) {
+                console.error('Erro ao conectar ao Chrome:', error);
+                
+                if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+                    reconnectAttempts++;
+                    statusEl.textContent = `Reconectando... (${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})`;
+                    statusEl.className = 'status connecting';
+                    
+                    setTimeout(connectToChrome, RECONNECT_DELAY);
+                } else {
+                    loadingEl.style.display = 'none';
+                    errorMessage.style.display = 'block';
+                    errorMessage.innerHTML = `
+                        <h2>❌ Erro ao conectar</h2>
+                        <p>${error.message}</p>
+                        <p style="margin-top: 10px; font-size: 12px; color: #888;">
+                            Verifique se o Chrome está rodando com remote-debugging-port=${DEBUG_PORT}
+                        </p>
+                        <button onclick="location.reload()" style="margin-top: 15px; padding: 8px 16px; background: #4caf50; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            Tentar Novamente
+                        </button>
+                    `;
+                    statusEl.textContent = 'Erro de conexão';
+                    statusEl.className = 'status error';
+                }
+            }
+        }
+        
+        let pollingInterval = null;
+        
+        function startPolling() {
+            // Atualiza a URL do iframe a cada 2 segundos para acompanhar navegação
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
+            }
+            
+            pollingInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(CDP_URL, {
+                        method: 'GET',
+                        mode: 'cors',
+                        cache: 'no-cache'
+                    });
+                    
+                    if (response.ok) {
+                        const pages = await response.json();
+                        const targetPage = pages.find(page => 
+                            page.type === 'page' && 
+                            !page.url.includes('chrome-devtools://') &&
+                            !page.url.includes('chrome://') &&
+                            !page.url.includes('data:') &&
+                            page.url.startsWith('http')
+                        ) || pages.find(page => 
+                            page.type === 'page' && 
+                            !page.url.includes('chrome-devtools://')
+                        ) || pages[0];
+                        
+                        if (targetPage) {
+                            const currentUrl = viewerFrame.src;
+                            const newUrl = targetPage.url;
+                            
+                            // Só atualiza se a URL mudou e o iframe já tem uma URL válida
+                            if (currentUrl && currentUrl !== 'about:blank' && currentUrl !== newUrl) {
+                                viewerFrame.src = newUrl;
+                                statusEl.textContent = `Conectado - ${newUrl.substring(0, 50)}...`;
+                            } else if (!currentUrl || currentUrl === 'about:blank') {
+                                // Se ainda não tem URL, define pela primeira vez
+                                viewerFrame.src = newUrl;
+                                statusEl.textContent = `Conectado - ${newUrl.substring(0, 50)}...`;
+                            }
+                        }
+                    }
+                } catch (error) {
+                    // Silenciosamente ignora erros de polling
+                    // Se houver erro contínuo, a próxima tentativa de conexão vai tratar
+                    console.warn('Erro ao atualizar (polling):', error.message);
+                }
+            }, 2000);
+        }
+        
+        // Inicia a conexão quando a página carrega
+        connectToChrome();
+        
+        // Limpa o intervalo quando a página é fechada
+        window.addEventListener('beforeunload', () => {
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
+            }
+        });
+    </script>
+</body>
+</html>
+
